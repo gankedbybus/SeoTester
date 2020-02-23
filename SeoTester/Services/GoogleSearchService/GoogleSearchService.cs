@@ -25,7 +25,7 @@ namespace SeoTester.Web.Services.GoogleSearchService
         {
             ValidateSearchParams(keyWords, url);
             var uri = new Uri(url);
-            var ranks = await GetGoogleSearchPosition(keyWords, uri, maxResults);
+            var ranks = await GetGoogleSearchRanks(keyWords, uri, maxResults);
             if (ranks.Any())
             {
                 return string.Join(", ", ranks);
@@ -52,17 +52,17 @@ namespace SeoTester.Web.Services.GoogleSearchService
             }
         }
 
-        private async Task<List<int>> GetGoogleSearchPosition(string searchTerm, Uri uri, int maxResults)
+        private async Task<List<int>> GetGoogleSearchRanks(string searchTerm, Uri uri, int maxResults)
         {
             var rawSearchEngineUrl = "https://www.google.com/search?num={0}&q={1}&btnG=Search";
             var searchUrl = string.Format(rawSearchEngineUrl, maxResults, HttpUtility.UrlEncode(searchTerm));
             var response = await _client.GetStreamAsync(searchUrl);
             using var reader = new StreamReader(response, Encoding.ASCII);
             var html = reader.ReadToEnd();
-            return FindPosition(html, uri);
+            return FindSearchRanks(html, uri);
         }
 
-        private List<int> FindPosition(string html, Uri uri)
+        private List<int> FindSearchRanks(string html, Uri uri)
         {
             var rankList = new List<int>();
             var googleSearchResultRegex = $"(<div class=\"kCrYT\"><a href=\"/url\\?q=)({new SeoConstants().WebsiteRegex})";

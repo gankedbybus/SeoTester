@@ -7,16 +7,16 @@ export class SeoTesterPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      keyWords: 'speed test',
-      lastKeyWords: '',
-      url: 'https://fast.com/',
-      lastUrl: '',
-      ranks: '',
-      loading: false,
       errors: {
         keyWords: '',
         url: ''
-      }
+      },
+      keyWords: '',
+      lastKeyWords: '',
+      lastUrl: '',
+      loading: false,
+      ranks: '',
+      url: ''
     };
   }
 
@@ -42,14 +42,12 @@ export class SeoTesterPage extends Component {
         break;
     }
 
-    this.setState({ errors, [name]: value }, () => {
-      console.log(errors);
-    });
+    this.setState({ errors, [name]: value });
   };
 
   getSearchRanks = async () => {
-    const { keyWords, url, errors } = this.state;
-    if (errors.keyWords || errors.url) {
+    const { keyWords, url } = this.state;
+    if (!this.formIsValidated()) {
       return;
     }
 
@@ -75,14 +73,15 @@ export class SeoTesterPage extends Component {
 
   render() {
     const {
+      errors,
       keyWords,
       lastKeyWords,
-      url,
       lastUrl,
       loading,
       ranks,
-      errors
+      url
     } = this.state;
+
     let contents =
       !ranks && !loading ? (
         <></>

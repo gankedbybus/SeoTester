@@ -23,7 +23,7 @@ namespace SeoTester.Tests.UnitTests
         }
 
         [Test]
-        public async Task GetRanksShouldNotReturnNUll()
+        public async Task GetRanksShouldNotReturnNull()
         {
             var keywords = "google";
             var url = "https://www.google.com/";
@@ -37,6 +37,12 @@ namespace SeoTester.Tests.UnitTests
         public void GetRanksShouldThrowMissingInputException(string keywords, string url)
         {
             Assert.ThrowsAsync<MissingInputException>(async () => await _googleSearchService.GetRanks(keywords, url, _maxResults));
+        }
+
+        [TestCase("google", "https://www.google.com/")]
+        public void GetRanksShouldNotThrowMissingInputException(string keywords, string url)
+        {
+            Assert.DoesNotThrowAsync(async () => await _googleSearchService.GetRanks(keywords, url, _maxResults));
         }
 
         [TestCase("htt://www.google.com/")]

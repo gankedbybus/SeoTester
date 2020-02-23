@@ -11,9 +11,9 @@ export class SearchResults extends Component {
       </div>
     ) : (
       <div>
-        Url: <span style={{ fontWeight: 'bold' }}>{url}</span> came up at rank/s{' '}
-        <span style={{ fontWeight: 'bold' }}>{ranks}</span> when searched with
-        Key Word/s <span style={{ fontWeight: 'bold' }}>{keyWords}</span>
+        Url: <span style={{ fontWeight: 'bold' }}>{url}</span> appeared at
+        rank/s <span style={{ fontWeight: 'bold' }}>{ranks}</span> when searched
+        with Key Word/s <span style={{ fontWeight: 'bold' }}>{keyWords}</span>
       </div>
     );
   }
