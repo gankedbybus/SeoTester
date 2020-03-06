@@ -35,7 +35,7 @@ export class SeoTesterPage extends Component {
           !value || value.trim() === ''
             ? 'Url is a required field!'
             : !value.match('h+[a-zA-Z0-9--?=/]*')
-            ? 'Invalid Url format e.g https://infotrack.com'
+            ? 'Invalid Url format e.g https://www.smokeball.com.au'
             : '';
         break;
       default:

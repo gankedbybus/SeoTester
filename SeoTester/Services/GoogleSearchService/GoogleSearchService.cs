@@ -54,9 +54,9 @@ namespace SeoTester.Web.Services.GoogleSearchService
 
         private async Task<List<int>> GetGoogleSearchRanks(string searchTerm, Uri uri, int maxResults)
         {
-            var rawSearchEngineUrl = "https://www.google.com/search?num={0}&q={1}&btnG=Search";
-            var searchUrl = string.Format(rawSearchEngineUrl, maxResults, HttpUtility.UrlEncode(searchTerm));
-            var response = await _client.GetStreamAsync(searchUrl);
+            var searchUrl = new StringBuilder("https://www.google.com/search?");
+            searchUrl.AppendFormat("num={0}&q={1}&btnG=Search", maxResults, HttpUtility.UrlEncode(searchTerm));
+            var response = await _client.GetStreamAsync(searchUrl.ToString());
             using var reader = new StreamReader(response, Encoding.ASCII);
             var html = reader.ReadToEnd();
             return FindSearchRanks(html, uri);
@@ -65,8 +65,9 @@ namespace SeoTester.Web.Services.GoogleSearchService
         private List<int> FindSearchRanks(string html, Uri uri)
         {
             var rankList = new List<int>();
-            var googleSearchResultRegex = $"(<div class=\"kCrYT\"><a href=\"/url\\?q=)({new SeoConstants().WebsiteRegex})";
-            var matches = Regex.Matches(html, googleSearchResultRegex);
+            var searchResultRegex = new StringBuilder("(<div class=\"kCrYT\"><a href=\"/url\\?q=)");
+            searchResultRegex.AppendFormat("({0})", new SeoConstants().WebsiteRegex);
+            var matches = Regex.Matches(html, searchResultRegex.ToString());
             for (int i = 0; i < matches.Count; i++)
             {
                 var match = matches[i].Groups[2].Value;

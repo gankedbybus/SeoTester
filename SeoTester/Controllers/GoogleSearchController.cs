@@ -25,7 +25,7 @@ namespace SeoTester.Controllers
             _config = config.Value;
         }
 
-        [HttpGet("getranks")]
+        [HttpGet("ranks")]
         public async Task<string> GetRanks(string keyWords, string url)
         {
             try

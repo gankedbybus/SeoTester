@@ -8,5 +8,5 @@ export const get = async endpoint => {
 };
 
 export const getGoogleSearchRanks = async (keyWords, url) => {
-  return await get(`googlesearch/getranks/?keyWords=${keyWords}&url=${url}`);
+  return await get(`googlesearch/ranks?keyWords=${keyWords}&url=${url}`);
 };
