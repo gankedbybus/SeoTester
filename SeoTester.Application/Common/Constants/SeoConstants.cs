@@ -1,7 +1,9 @@
 ﻿namespace SeoTester.Application.Common.Constants
 {
-    public class SeoConstants
+    public static class SeoConstants
     {
-        public readonly string WebsiteRegex = "http+[a-zA-Z0-9--?=/]*";
+        public static string WebsiteRegex = "http+[a-zA-Z0-9--?=/]*";
+        public static string GoogleRegex = "(<div class=\"r\"><a href=\")";
+        public static string BingRegex = "(<h2><a href=\")";
     }
 }

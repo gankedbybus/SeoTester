@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SeoTester.Application.Common.Interfaces;
 using SeoTester.Web.Config;
-using SeoTester.Web.Services.GoogleSearchService;
+using SeoTester.Web.Services;
 
 namespace SeoTester
 {
@@ -23,8 +23,8 @@ namespace SeoTester
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            services.AddScoped<IGoogleSearchService, GoogleSearchService>();
-            services.AddHttpClient<IGoogleSearchService, GoogleSearchService>();
+            services.AddScoped<ISearchServiceFactory, SearchServiceFactory>();
+            services.AddHttpClient<ISearchServiceFactory, SearchServiceFactory>();
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {

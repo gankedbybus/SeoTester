@@ -1,18 +1,16 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Route } from 'react-router';
-import { Layout } from './components/Layout';
-import { SeoTesterPage } from './components/SeoTester/seoTesterPage';
+import Layout from './components/Layout';
+import SeoTesterPage from './pages/SeoTester/index';
 
 import './custom.css';
 
-export default class App extends Component {
-  static displayName = App.name;
-
-  render() {
+const App = () => {
     return (
-      <Layout>
-        <Route exact path='/' component={SeoTesterPage} />
-      </Layout>
+        <Layout>
+            <Route exact path='/' component={SeoTesterPage} />
+        </Layout>
     );
-  }
-}
+};
+
+export default App;

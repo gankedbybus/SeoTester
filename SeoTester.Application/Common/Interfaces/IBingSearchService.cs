@@ -1,6 +1,6 @@
 ﻿namespace SeoTester.Application.Common.Interfaces
 {
-    public interface IGoogleSearchService : ISearchService
+    public interface IBingSearchService : ISearchService
     {
     }
 }
