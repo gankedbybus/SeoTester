@@ -1,4 +1,4 @@
-export const get = async (endpoint, extraHeaders) => {
+const get = async (endpoint, extraHeaders) => {
     return await fetch(endpoint, {
         headers: {
             ...extraHeaders,
@@ -8,7 +8,11 @@ export const get = async (endpoint, extraHeaders) => {
     });
 };
 
-export const getSearchRanks = async (searchEngine, keyWords, url) => {
+const getSearchRanks = async (searchEngine, keyWords, url) => {
     const searchEngineHeader = { searchEngine: searchEngine };
     return await get(`search/ranks?keyWords=${keyWords}&url=${url}`, searchEngineHeader);
+};
+
+export default {
+    getSearchRanks
 };

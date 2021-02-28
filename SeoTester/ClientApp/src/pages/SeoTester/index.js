@@ -1,11 +1,8 @@
 import React, { useState } from 'react';
-import { getSearchRanks } from '../../api/searchApi';
+import api from '../../api/searchApi';
 import SearchResults from '../../components/SearchResults';
 import './seoTester.css';
-import { Form, Button } from 'react-bootstrap';
-import Row from 'react-bootstrap/Row';
-import Container from 'react-bootstrap/Container';
-import Col from 'react-bootstrap/Col';
+import { Button, Col, Container, Form, Row } from 'react-bootstrap';
 
 const SeoTesterPage = () => {
     const [errors, setErrors] = useState({
@@ -61,7 +58,7 @@ const SeoTesterPage = () => {
 
         setLoading(true);
         try {
-            const response = await getSearchRanks(searchEngine, keyWords, url);
+            const response = await api.getSearchRanks(searchEngine, keyWords, url);
             var ranks = await response.json();
             setLastKeyWords(keyWords);
             setLastUrl(url);
