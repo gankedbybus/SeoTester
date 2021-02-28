@@ -7,6 +7,10 @@ using Microsoft.Extensions.Hosting;
 using SeoTester.Application.Common.Interfaces;
 using SeoTester.Web.Config;
 using SeoTester.Web.Services;
+using SeoTester.Web.Services.FileManager;
+using SeoTester.Web.Services.HttpHandler;
+using SeoTester.Web.Services.Scraper;
+using SeoTester.Web.Services.SearchRank;
 
 namespace SeoTester
 {
@@ -23,8 +27,12 @@ namespace SeoTester
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            services.AddScoped<IHttpHandler, HttpHandlerService>();
+            services.AddHttpClient<IHttpHandler, HttpHandlerService>();
+            services.AddScoped<IFileManagerService, FileManagerService>();
+            services.AddScoped<IScraperService, ScraperService>();
+            services.AddScoped<ISearchRankService, SearchRankService>();
             services.AddScoped<ISearchServiceFactory, SearchServiceFactory>();
-            services.AddHttpClient<ISearchServiceFactory, SearchServiceFactory>();
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {

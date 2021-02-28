@@ -13,16 +13,16 @@ namespace SeoTester.Controllers
     public class SearchController : ControllerBase
     {
         private readonly ILogger<SearchController> _logger;
-        private readonly SeoSettings _config;
         private readonly ISearchServiceFactory _searchServiceFactory;
+        private readonly SeoSettings _config;
 
         public SearchController(ILogger<SearchController> logger,
-                                IOptions<SeoSettings> config,
-                                ISearchServiceFactory searchServiceFactory)
+                                ISearchServiceFactory searchServiceFactory,
+                                IOptions<SeoSettings> config)
         {
             _logger = logger;
-            _config = config.Value;
             _searchServiceFactory = searchServiceFactory;
+            _config = config.Value;
         }
 
         [HttpGet("ranks")]

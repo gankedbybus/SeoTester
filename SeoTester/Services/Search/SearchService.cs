@@ -3,9 +3,7 @@ using SeoTester.Application.Common.Exceptions;
 using SeoTester.Application.Common.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -14,12 +12,14 @@ namespace SeoTester.Web.Services.Search
 {
     public class SearchService : ISearchService
     {
-        private readonly HttpClient _client;
-        private readonly string _searchResultRegex = string.Empty;
+        private readonly IScraperService _scraperService;
+        private readonly ISearchRankService _searchRankService;
         private readonly SearchEngine _searchEngine;
-        public SearchService(HttpClient client, SearchEngine searchEngine, string searchResultRegex)
+        private readonly string _searchResultRegex = string.Empty;
+        public SearchService(IScraperService scraperService, ISearchRankService searchRankService, SearchEngine searchEngine, string searchResultRegex)
         {
-            _client = client;
+            _scraperService = scraperService;
+            _searchRankService = searchRankService;
             _searchEngine = searchEngine;
             _searchResultRegex = searchResultRegex;
         }
@@ -43,13 +43,11 @@ namespace SeoTester.Web.Services.Search
             {
                 throw new MissingInputException("keywWords");
             }
-
-            if (string.IsNullOrWhiteSpace(url))
+            else if (string.IsNullOrWhiteSpace(url))
             {
                 throw new MissingInputException("url");
             }
-
-            if (!Regex.Match(url, SeoConstants.WebsiteRegex).Success)
+            else if (!Regex.Match(url, SeoConstants.WebsiteRegex).Success)
             {
                 throw new InvalidUrlFormatException(url);
             }
@@ -61,14 +59,22 @@ namespace SeoTester.Web.Services.Search
             var resultCount = 0;
             var maxResultsReached = false;
             var rankList = new List<int>();
+            // seperated here to make it easier to read string interpolation in VS :)
+            var baseUrl = "https://infotrack-tests.infotrack.com.au/" + $"{_searchEngine}/Page";
             while (!maxResultsReached)
             {
                 // searchTerm would normally be appended here if using a real search engine and not a static webpage
-                var searchUrl = new StringBuilder("https://infotrack-tests.infotrack.com.au/" + $"{_searchEngine}/Page{ (pageCount < 10 ? $"0{pageCount}" : pageCount.ToString())}.html");
-                var response = await _client.GetStreamAsync(searchUrl.ToString());
-                using var reader = new StreamReader(response, Encoding.ASCII);
-                var html = reader.ReadToEnd();
-                var fetchedCount = FindSearchRanks(rankList, html, uri, maxResults, ref resultCount);
+                var searchUrl = new StringBuilder($"{baseUrl}{ (pageCount < 10 ? $"0{ pageCount }" : pageCount.ToString())}.html");
+                var html = await _scraperService.GetHtml(searchUrl.ToString());
+                if (string.IsNullOrWhiteSpace(html))
+                {
+                    return rankList;
+                }
+
+                var searchResultRegex = new StringBuilder(_searchResultRegex);
+                searchResultRegex.AppendFormat("({0})", SeoConstants.WebsiteRegex);
+                int fetchedCount = 0;
+                rankList.AddRange(_searchRankService.GetSearchRanks(html, uri.Host, searchResultRegex.ToString(), maxResults, ref fetchedCount, ref resultCount));
                 if (fetchedCount == 0 || resultCount > maxResults)
                 {
                     maxResultsReached = true;
@@ -80,33 +86,6 @@ namespace SeoTester.Web.Services.Search
             }
 
             return rankList;
-        }
-
-        private int FindSearchRanks(List<int> rankList, string html, Uri uri, int maxResults, ref int resultCount)
-        {
-            var searchResultRegex = new StringBuilder(_searchResultRegex);
-            searchResultRegex.AppendFormat("({0})", SeoConstants.WebsiteRegex);
-            var searchResults = Regex.Matches(html, searchResultRegex.ToString());
-            for (int i = 0; i < searchResults.Count; i++)
-            {
-                var match = searchResults[i].Groups[2].Value;
-                if (match.Contains(uri.Host))
-                {
-                    // prevent fetching results higher than max e.g 51 if maxResults is 50
-                    var rank = resultCount + i + 1;
-                    if (rank <= maxResults)
-                    {
-                        rankList.Add(rank);
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-            }
-
-            resultCount = resultCount += searchResults.Count;
-            return searchResults.Count;
         }
     }
 }
